@@ -1,0 +1,14 @@
+# Service ClusterIP for Device
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdci-device-clusterip
+spec:
+  selector:
+    app: sdci-device
+  ports:
+  - protocol: TCP
+    name: http    
+    port: 9001
+    targetPort: 9001
+  type: ClusterIP

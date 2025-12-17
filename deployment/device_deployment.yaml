@@ -1,0 +1,36 @@
+# Deployment Device
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdci-device
+spec:
+  selector:
+    matchLabels:
+      app: sdci-device
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sdci-device
+    spec:
+      containers:
+      - name: sdci-device-container
+        image: 127.0.0.1:5000/device:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9001
+      env:
+        - name: LOCAL_IP
+          value: "127.0.0.1"
+        - name: LOCAL_PORT
+          value: "9001"
+        - name: LOCAL_NAME
+          value: "dev1"
+        - name: REMOTE_IP
+          value: "127.0.0.1"
+        - name: REMOTE_PORT
+          value: "8282"
+        - name: REMOTE_NAME
+          value: "gwf1"
+        - name: SEND_PERIOD
+          value: "3000"

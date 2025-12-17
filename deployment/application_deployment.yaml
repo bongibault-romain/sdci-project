@@ -1,0 +1,28 @@
+# Deployment Application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdci-application
+spec:
+  selector:
+    matchLabels:
+      app: sdci-application
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sdci-application
+    spec:
+      containers:
+      - name: sdci-application-container
+        image: 127.0.0.1:5000/application:latest
+        imagePullPolicy: Always
+      env:
+        - name: REMOTE_IP
+          value: "127.0.0.1"
+        - name: REMOTE_PORT
+          value: "8080"
+        - name: DEVICE_NAME
+          value: "dev1"
+        - name: SEND_PERIOD
+          value: "5000"

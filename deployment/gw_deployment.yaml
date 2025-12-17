@@ -1,0 +1,35 @@
+# Deployment Gateway i
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdci-gateway
+spec:
+  selector:
+    matchLabels:
+      app: sdci-gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sdci-gateway
+    spec:
+      containers:
+      - name: sdci-gateway-container
+        image: 127.0.0.1:5000/gateway:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8181
+
+        env:
+        - name: LOCAL_IP
+          value: "127.0.0.1"
+        - name: LOCAL_PORT
+          value: "8181"
+        - name: LOCAL_NAME  
+          value: "gwi"
+        - name: REMOTE_IP
+          value: "127.0.0.1"
+        - name: REMOTE_PORT
+          value: "8080"
+        - name: REMOTE_NAME
+          value: "srv"

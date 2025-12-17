@@ -1,0 +1,9 @@
+# Service ClusterIP for Application
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdci-application-clusterip
+spec:
+  selector:
+    app: sdci-application
+  type: ClusterIP
