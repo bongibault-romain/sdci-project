@@ -11,10 +11,16 @@ kubectl rollout status deployment/sdci-server
 echo "✅ Serveur prêt"
 
 echo "=== Déploiement du gateway ==="
-kubectl apply -f "$DEPLOYMENT_DIR/gw_cluster_ip.yaml"
-kubectl apply -f "$DEPLOYMENT_DIR/gw_deployment.yaml"
-kubectl rollout status deployment/sdci-gateway
+kubectl apply -f "$DEPLOYMENT_DIR/gw_inter_cluster_ip.yaml"
+kubectl apply -f "$DEPLOYMENT_DIR/gw_inter_deployment.yaml"
+kubectl rollout status deployment/sdci-gateway-inter
 echo "✅ Gateway prêt"
+
+echo "=== Déploiement du gateway finale ==="
+kubectl apply -f "$DEPLOYMENT_DIR/gw_finale1_cluster_ip.yaml"
+kubectl apply -f "$DEPLOYMENT_DIR/gw_finale1_deployment.yaml"
+kubectl rollout status deployment/sdci-gateway-finale1
+echo "✅ Gateway finale prêt"
 
 echo "=== Déploiement du device ==="
 kubectl apply -f "$DEPLOYMENT_DIR/device_cluster_ip.yaml"
