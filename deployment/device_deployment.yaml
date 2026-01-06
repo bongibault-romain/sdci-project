@@ -27,9 +27,9 @@ spec:
           - name: LOCAL_NAME
             value: "dev1"
           - name: REMOTE_IP
-            value: "sdci-gateway-clusterip"
+            value: "sdci-gateway-finale1-clusterip"
           - name: REMOTE_PORT
-            value: "8181"
+            value: "8282"
           - name: REMOTE_NAME
             value: "gwf1"
           - name: SEND_PERIOD

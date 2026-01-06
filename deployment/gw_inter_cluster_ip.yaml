@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: sdci-gateway-clusterip
+  name: sdci-gateway-inter-clusterip
 spec:
   selector:
-    app: sdci-gateway
+    app: sdci-gateway-inter
   ports:
   - protocol: TCP
     name: http    
