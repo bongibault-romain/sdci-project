@@ -6,4 +6,9 @@ metadata:
 spec:
   selector:
     app: sdci-application
+  ports:
+  - protocol: TCP
+    name: http    
+    port: 7001
+    targetPort: 7001
   type: ClusterIP

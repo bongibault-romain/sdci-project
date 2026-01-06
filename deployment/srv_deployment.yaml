@@ -15,13 +15,13 @@ spec:
     spec:
       containers:
       - name: sdci-server-container
-        image: 127.0.0.1:5000/server:latest
-        imagePullPolicy: Always
+        image: sdci-server:v1
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
         env:
         - name: LOCAL_IP
-          value: "127.0.0.1"
+          value: "sdci-server-clusterip"
         - name: LOCAL_PORT
           value: "8080"
         - name: LOCAL_NAME

@@ -15,20 +15,19 @@ spec:
     spec:
       containers:
       - name: sdci-gateway-container
-        image: 127.0.0.1:5000/gateway:latest
-        imagePullPolicy: Always
+        image: sdci-gateway:v1
+        imagePullPolicy: Never
         ports:
         - containerPort: 8181
-
         env:
         - name: LOCAL_IP
-          value: "127.0.0.1"
+          value: "sdci-gateway-clusterip"
         - name: LOCAL_PORT
           value: "8181"
         - name: LOCAL_NAME  
           value: "gwi"
         - name: REMOTE_IP
-          value: "127.0.0.1"
+          value: "sdci-server-clusterip"
         - name: REMOTE_PORT
           value: "8080"
         - name: REMOTE_NAME
