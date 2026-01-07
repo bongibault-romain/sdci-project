@@ -25,6 +25,6 @@ spec:
           - name: REMOTE_PORT
             value: "7777"
           - name: DEVICE_NAME
-            value: "gwf1-dev1"
+            value: "gwf2-dev1"
           - name: SEND_PERIOD
             value: "5000"
