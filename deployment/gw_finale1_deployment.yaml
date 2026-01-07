@@ -1,4 +1,4 @@
-# Deployment Gateway i
+# Deployment Gateway finale
 apiVersion: apps/v1
 kind: Deployment
 metadata:
