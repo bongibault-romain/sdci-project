@@ -2,29 +2,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sdci-application
+  name: sdci-app1
 spec:
   selector:
     matchLabels:
-      app: sdci-application
+      app: sdci-app1
   replicas: 1
   template:
     metadata:
       labels:
-        app: sdci-application
+        app: sdci-app1
     spec:
       containers:
-      - name: sdci-application-container
+      - name: sdci-app1-container
         image: sdci-application:v1
         imagePullPolicy: Never
         ports:
         - containerPort: 7001
         env:
           - name: REMOTE_IP
-            value: "sdci-server-clusterip"
+            value: "sdci-srv-clusterip"
           - name: REMOTE_PORT
-            value: "8080"
+            value: "7777"
           - name: DEVICE_NAME
-            value: "dev1"
+            value: "gwf1-dev1"
           - name: SEND_PERIOD
             value: "5000"

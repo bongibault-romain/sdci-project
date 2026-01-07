@@ -82,9 +82,8 @@ function addDeviceData(dev, data) {
     return result;
 }
 
-
-
 app.get('/devices', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     let resObj = [];
     db.devices.forEach((v,k) => {
@@ -93,6 +92,7 @@ app.get('/devices', function(req, res) {
     res.status(E_OK).send(resObj);
 });
 app.get('/device/:dev', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var dev = req.params.dev;
     var device = db.devices.get(dev);
@@ -102,6 +102,7 @@ app.get('/device/:dev', function(req, res) {
         res.sendStatus(E_NOT_FOUND);
 });
 app.post('/device/:dev/data', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var dev = req.params.dev;
     var result = addDeviceData(dev, req.body);
@@ -111,6 +112,7 @@ app.post('/device/:dev/data', function(req, res) {
         res.sendStatus(E_NOT_FOUND);
 });
 app.get('/device/:dev/data', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var dev = req.params.dev;
     var device = db.devices.get(dev);
@@ -130,6 +132,7 @@ app.get('/device/:dev/data', function(req, res) {
         res.sendStatus(E_NOT_FOUND);
 });
 app.get('/device/:dev/latest', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var dev = req.params.dev;
     var device = db.devices.get(dev);
@@ -146,6 +149,7 @@ app.get('/device/:dev/latest', function(req, res) {
         res.sendStatus(E_NOT_FOUND);
 });
 app.post('/devices/register', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var result = addNewDevice(req.body);
     if ( result === 0)
@@ -154,6 +158,7 @@ app.post('/devices/register', function(req, res) {
         res.sendStatus(E_ALREADY_EXIST);  
 });
 app.get('/gateways', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     let resObj = [];
     db.gateways.forEach((v,k) => {
@@ -162,6 +167,7 @@ app.get('/gateways', function(req, res) {
     res.send(resObj);
 });
 app.get('/gateway/:gw', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var gw = req.params.gw;
     var gateway = db.gateways.get(gw);
@@ -171,6 +177,7 @@ app.get('/gateway/:gw', function(req, res) {
         res.sendStatus(E_NOT_FOUND);
 });
 app.post('/gateways/register', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var result = addNewGateway(req.body);
     if ( result === 0)
@@ -180,10 +187,12 @@ app.post('/gateways/register', function(req, res) {
 });
 
 app.get('/ping', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     res.status(E_OK).send({pong: Date.now()});
 });
 app.get('/health', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     si.currentLoad((d) => {
         console.log(d);

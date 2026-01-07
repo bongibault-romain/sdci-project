@@ -2,33 +2,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sdci-gateway-finale1
+  name: sdci-gwf1
 spec:
   selector:
     matchLabels:
-      app: sdci-gateway-finale1
+      app: sdci-gwf1
   replicas: 1
   template:
     metadata:
       labels:
-        app: sdci-gateway-finale1
+        app: sdci-gwf1
     spec:
       containers:
-      - name: sdci-gateway-finale1-container
-        image: sdci-gateway:v1
+      - name: sdci-gwf1-container
+        image: sdci-gateway:v2
         imagePullPolicy: Never
         ports:
         - containerPort: 8282
         env:
         - name: LOCAL_IP
-          value: "sdci-gateway-finale1-clusterip"
+          value: "sdci-gwf1-clusterip"
         - name: LOCAL_PORT
           value: "8282"
         - name: LOCAL_NAME  
           value: "gwf1"
         - name: REMOTE_IP
-          value: "sdci-gateway-inter-clusterip"
+          value: "sdci-gwi-clusterip"
         - name: REMOTE_PORT
           value: "8181"
         - name: REMOTE_NAME
-          value: "sdci-gateway-inter"
+          value: "gwi"

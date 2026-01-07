@@ -1,0 +1,14 @@
+# Service ClusterIP for Gateway i
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdci-gwf1-clusterip
+spec:
+  selector:
+    app: sdci-gwf1
+  ports:
+  - protocol: TCP
+    name: http    
+    port: 8282
+    targetPort: 8282
+  type: ClusterIP

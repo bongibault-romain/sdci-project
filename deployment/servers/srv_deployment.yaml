@@ -2,27 +2,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sdci-server
+  name: sdci-srv
 spec:
   selector:
     matchLabels:
-      app: sdci-server
+      app: sdci-srv
   replicas: 1
   template:
     metadata:
       labels:
-        app: sdci-server
+        app: sdci-srv
     spec:
       containers:
-      - name: sdci-server-container
-        image: sdci-server:v1
+      - name: sdci-srv-container
+        image: sdci-server:v2
         imagePullPolicy: Never
         ports:
-        - containerPort: 8080
+        - containerPort: 7777
         env:
         - name: LOCAL_IP
-          value: "sdci-server-clusterip"
+          value: "sdci-srv-clusterip"
         - name: LOCAL_PORT
-          value: "8080"
+          value: "7777"
         - name: LOCAL_NAME
           value: "srv"

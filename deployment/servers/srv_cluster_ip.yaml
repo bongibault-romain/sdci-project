@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: sdci-server-clusterip
+  name: sdci-srv-clusterip
 spec:
   selector:
-    app: sdci-server
+    app: sdci-srv
   ports:
   - protocol: TCP
     name: http    
-    port: 8080
-    targetPort: 8080
+    port: 7777
+    targetPort: 7777
   type: ClusterIP
