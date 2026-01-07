@@ -53,7 +53,9 @@ function doPOST(uri, body, onResponse) {
     request({method: 'POST', uri: uri, json : body}, onResponse); 
 }
 
-function register() {
+function register() { 
+    console.log('Registering gateway ' + LOCAL_ENDPOINT.NAME + ' to ' + REMOTE_ENDPOINT.NAME);
+    
     doPOST(
         'http://' + REMOTE_ENDPOINT.IP + ':' + REMOTE_ENDPOINT.PORT + '/gateways/register', 
         {
@@ -61,6 +63,14 @@ function register() {
             PoC : 'http://' + LOCAL_ENDPOINT.IP + ':' + LOCAL_ENDPOINT.PORT, 
         },
         function(error, response, respBody) {
+            if (error) {
+                console.log('Error registering gateway ' + LOCAL_ENDPOINT.NAME + ' to ' + REMOTE_ENDPOINT.NAME);
+                console.log(error);
+                console.log('Retrying in 2 seconds...');
+                setTimeout(register, 2000);
+                return;
+            }
+
             console.log(respBody);
         }
     );
@@ -68,14 +78,17 @@ function register() {
 
 
 app.post('/gateways/register', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var result = addNewGateway(req.body);
+
     if (result === 0)
         res.sendStatus(E_CREATED);  
     else
         res.sendStatus(E_ALREADY_EXIST);  
  });
 app.post('/devices/register', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     doPOST(
         'http://' + REMOTE_ENDPOINT.IP + ':' +REMOTE_ENDPOINT.PORT + '/devices/register',
@@ -99,6 +112,7 @@ app.post('/devices/register', function(req, res) {
     )
 });
 app.get('/gateways', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     let resObj = [];
     db.gateways.forEach((v,k) => {
@@ -107,6 +121,7 @@ app.get('/gateways', function(req, res) {
     res.send(resObj);
 });
 app.get('/gateway/:gw', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     var gw = req.params.gw;
     var gateway = db.gateways.get(gw);
@@ -117,10 +132,12 @@ app.get('/gateway/:gw', function(req, res) {
 });
 
 app.get('/ping', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     res.status(E_OK).send({pong: Date.now()});
 });
 app.get('/health', function(req, res) {
+    console.log(req.url);
     console.log(req.body);
     si.currentLoad((d) => {
         console.log(d);

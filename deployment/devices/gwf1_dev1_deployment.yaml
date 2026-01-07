@@ -2,32 +2,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sdci-device
+  name: sdci-gwf1-dev1
 spec:
   selector:
     matchLabels:
-      app: sdci-device
+      app: sdci-gwf1-dev1
   replicas: 1
   template:
     metadata:
       labels:
-        app: sdci-device
+        app: sdci-gwf1-dev1
     spec:
       containers:
-      - name: sdci-device-container
+      - name: sdci-gwf1-dev1-container
         image: sdci-device:v1
         imagePullPolicy: Never
         ports:
         - containerPort: 9001
         env:
           - name: LOCAL_IP
-            value: "sdci-device-clusterip"
+            value: "sdci-gwf1-dev1-clusterip"
           - name: LOCAL_PORT
             value: "9001"
           - name: LOCAL_NAME
-            value: "dev1"
+            value: "gwf1-dev1"
           - name: REMOTE_IP
-            value: "sdci-gateway-finale1-clusterip"
+            value: "sdci-gwf1-clusterip"
           - name: REMOTE_PORT
             value: "8282"
           - name: REMOTE_NAME

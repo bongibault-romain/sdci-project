@@ -1,0 +1,36 @@
+# Deployment Device
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdci-gwf2-dev1
+spec:
+  selector:
+    matchLabels:
+      app: sdci-gwf2-dev1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sdci-gwf2-dev1
+    spec:
+      containers:
+      - name: sdci-gwf2-dev1-container
+        image: sdci-device:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9011
+        env:
+          - name: LOCAL_IP
+            value: "sdci-gwf2-dev1-clusterip"
+          - name: LOCAL_PORT
+            value: "9011"
+          - name: LOCAL_NAME
+            value: "gwf2-dev1"
+          - name: REMOTE_IP
+            value: "sdci-gwf2-clusterip"
+          - name: REMOTE_PORT
+            value: "8383"
+          - name: REMOTE_NAME
+            value: "gwf2"
+          - name: SEND_PERIOD
+            value: "3000"

@@ -1,0 +1,14 @@
+# Service ClusterIP for Device
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdci-gwf1-dev1-clusterip
+spec:
+  selector:
+    app: sdci-gwf1-dev1
+  ports:
+  - protocol: TCP
+    name: http    
+    port: 9001
+    targetPort: 9001
+  type: ClusterIP

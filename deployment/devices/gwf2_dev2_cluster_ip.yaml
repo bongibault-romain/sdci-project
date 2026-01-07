@@ -1,0 +1,14 @@
+# Service ClusterIP for Device
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdci-gwf2-dev2-clusterip
+spec:
+  selector:
+    app: sdci-gwf2-dev2
+  ports:
+  - protocol: TCP
+    name: http    
+    port: 9012
+    targetPort: 9012
+  type: ClusterIP

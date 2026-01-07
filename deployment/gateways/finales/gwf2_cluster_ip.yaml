@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: sdci-gateway-inter-clusterip
+  name: sdci-gwf2-clusterip
 spec:
   selector:
-    app: sdci-gateway-inter
+    app: sdci-gwf2
   ports:
   - protocol: TCP
     name: http    
-    port: 8181
-    targetPort: 8181
+    port: 8383
+    targetPort: 8383
   type: ClusterIP
