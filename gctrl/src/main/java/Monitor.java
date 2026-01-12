@@ -7,10 +7,21 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestWord;
 import de.vandermeer.asciithemes.a7.A7_Grids;
 
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 //
+
+import org.h2.util.json.JSONObject;
 
 //* @author couedrao on 25/11/2019.
 
@@ -95,10 +106,50 @@ class Monitor {
     }
 
     private int get_data() {
-        //Call Sensors
-        /*TODO*/
+    try {
+        String promQL = 
+            "sum(rate(istio_request_bytes_count{destination_workload=\"sdci-gateway\"}[1m]))" ;
+
+        String encodedQuery = java.net.URLEncoder.encode(promQL, "UTF-8");
+
+        URI uri = URI.create(
+            "http://localhost:9090/api/v1/query?query=" + encodedQuery
+        );
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        //JSONObject json = new JSONObject(response.body());
+
+        // result[0].value[1] → valeur de la métrique
+        // String value = json
+        //         .getJSONObject("data")
+        //         .getJSONArray("result")
+        //         .getJSONObject(0)
+        //         .getJSONArray("value")
+        //         .getString(1);
+
+        //double latency = Double.parseDouble(value);
+
+        // Main.logger(this.getClass().getSimpleName(),
+        //         "Collected gateway latency: " + latency + " ms");
+
+        // return (int) latency;
+
         return 0;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return 0; // fallback si Prometheus ne répond pas
     }
+}
+
 
     private double get_fake_data() {
         //return new Random().nextInt();

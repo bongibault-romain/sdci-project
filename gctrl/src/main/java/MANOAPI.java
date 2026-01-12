@@ -19,6 +19,9 @@ class MANOAPI {
             Main.logger(this.getClass().getSimpleName(), "\t" + e.getKey() + " : " + e.getValue());
         }
         //TODO
+        //gateway deployment
+        Main.logger(this.getClass().getSimpleName(), "Deployed GW IP : " + ip);
+        
 
         return ip;
     }
