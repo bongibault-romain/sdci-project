@@ -32,3 +32,8 @@ spec:
           value: "7777"
         - name: REMOTE_NAME
           value: "srv"
+        resources:
+          requests:
+            cpu: "500m"
+          limits:
+            cpu: "1"
