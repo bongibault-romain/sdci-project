@@ -1,8 +1,18 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.Configuration;
+import io.kubernetes.client.openapi.apis.AppsV1Api;
+import io.kubernetes.client.openapi.models.V1Scale;
+import io.kubernetes.client.util.Config;
+import org.h2.util.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
 
 /**
  * @author couedrao on 27/11/2019.
@@ -36,4 +46,22 @@ class MANOAPI {
 
         return ips;
     }
+
+    void pod_scaling(String name, int number) throws IOException, InterruptedException {
+        String query = "localhost:/apis/apps/v1/namespaces/default/deployment/" + name + "/scale";
+
+        ApiClient client = Config.defaultClient();
+        Configuration.setDefaultApiClient(client);
+        AppsV1Api api = new AppsV1Api();
+
+        try {
+            V1Scale scale = api.readNamespacedDeploymentScale(name, "default").execute();
+            Objects.requireNonNull(scale.getSpec()).setReplicas(number);
+            V1Scale updatedScale = api.replaceNamespacedDeploymentScale(name, "default", scale).execute();
+            System.out.println("Message : " + updatedScale.getSpec().getReplicas());
+        } catch (ApiException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
 }

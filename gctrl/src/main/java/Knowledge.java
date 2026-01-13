@@ -56,14 +56,14 @@ class Knowledge {
         store_rfcs();
         store_plans();
         store_execution_workflow();
-        //TODO : update gwinfo
-        gwinfo.put("name", "gw");
-        gwinfo.put("image", "alpine:latest");
-        gwinfo.put("net", "new_network");
+
+        gwinfo.put("name", "gwi");
+        gwinfo.put("image", "sdci-gateway:v2");
+        //gwinfo.put("net", "new_network");
 
         gwsinfo.add(0, gwinfo);
         gwsinfo.add(1, gwinfo);
-        gwsinfo.add(2, gwinfo);
+        //gwsinfo.add(2, gwinfo);
 
         Main.logger(this.getClass().getSimpleName(), "Knowledge Starting");
 
