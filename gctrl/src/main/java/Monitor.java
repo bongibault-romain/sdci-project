@@ -6,23 +6,21 @@ import com.github.signaflo.timeseries.model.arima.ArimaOrder;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestWord;
 import de.vandermeer.asciithemes.a7.A7_Grids;
+import org.json.JSONObject;
 
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 //
-
-import org.h2.util.json.JSONObject;
-
 //* @author couedrao on 25/11/2019.
 
 //* @project gctrl
@@ -66,14 +64,14 @@ class Monitor {
                 double[] prediction = predict_next_lat(rs);
                 boolean isOk = true;
                 for (int j = 0; j < Knowledge.horizon; j++) {
-                    if (prediction[j] > Knowledge.gw_lat_threshold) {
-                        Main.logger(this.getClass().getSimpleName(), "Symptom --> To Analyse : " + symptom.get(1));
-                        update_symptom(symptom.get(1));
-                        isOk = false;
-                        break;
-                    } else if (prediction[j] < .0) {
+                    if (prediction[j] < .0) {
                         Main.logger(this.getClass().getSimpleName(), " Symptom --> To Analyse : " + symptom.get(0));
                         update_symptom(symptom.get(0));
+                        isOk = false;
+                        break;
+                    } else if (prediction[j] <= Knowledge.gw_debit_threshold) {
+                        Main.logger(this.getClass().getSimpleName(), "Symptom --> To Analyse : " + symptom.get(1));
+                        update_symptom(symptom.get(1));
                         isOk = false;
                         break;
                     }
@@ -87,15 +85,17 @@ class Monitor {
             }
     }
 
-    //Data Collector TODO : modify
     private void data_collector() {
         new Thread(() -> {
-            Main.logger(this.getClass().getSimpleName(), "Filling db with latencies");
+            Main.logger(this.getClass().getSimpleName(), "Filling db with data every " + period + " ms");
             while (Main.run)
                 try {
-                    //TODO: Remove this
                     Thread.sleep(period);
-                    Main.shared_knowledge.insert_in_tab(new java.sql.Timestamp(new java.util.Date().getTime()), get_fake_data());
+                    double data = get_data();
+
+                    Main.logger(this.getClass().getSimpleName(), "Collected Data : " + data);
+
+                    Main.shared_knowledge.insert_in_tab(new Timestamp(new Date().getTime()), data);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -105,48 +105,62 @@ class Monitor {
         ).start();
     }
 
-    private int get_data() {
+    private double get_data() {
     try {
-        String promQL = 
-            "sum(rate(istio_request_bytes_count{destination_workload=\"sdci-gateway\"}[1m]))" ;
+        String requestQL =
+                "sum(rate(istio_request_bytes_count{destination_workload=\"sdci-gwi\"}[1m]))" ;
+        String responseQL =
+                "sum(rate(istio_response_bytes_count{destination_workload=\"sdci-gwi\"}[1m]))" ;
 
-        String encodedQuery = java.net.URLEncoder.encode(promQL, "UTF-8");
+        String requestEncodedQuery = URLEncoder.encode(requestQL, StandardCharsets.UTF_8);
+        String responseEncodedQuery = URLEncoder.encode(responseQL, StandardCharsets.UTF_8);
 
-        URI uri = URI.create(
-            "http://localhost:9090/api/v1/query?query=" + encodedQuery
+        URI requestURI = URI.create(
+            "http://localhost:9090/api/v1/query?query=" + requestEncodedQuery
+        );
+        URI responseURI = URI.create(
+            "http://localhost:9090/api/v1/query?query=" + responseEncodedQuery
         );
 
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
+        HttpRequest requestRequest = HttpRequest.newBuilder()
+                .uri(requestURI)
                 .GET()
                 .build();
 
-        HttpResponse<String> response =
-                client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpRequest responseRequest = HttpRequest.newBuilder()
+                .uri(responseURI)
+                .GET()
+                .build();
 
-        //JSONObject json = new JSONObject(response.body());
+        HttpResponse<String> requestResponse =
+                client.send(requestRequest, HttpResponse.BodyHandlers.ofString());
 
-        // result[0].value[1] → valeur de la métrique
-        // String value = json
-        //         .getJSONObject("data")
-        //         .getJSONArray("result")
-        //         .getJSONObject(0)
-        //         .getJSONArray("value")
-        //         .getString(1);
+        HttpResponse<String> responseResponse =
+                client.send(responseRequest, HttpResponse.BodyHandlers.ofString());
 
-        //double latency = Double.parseDouble(value);
+        JSONObject requestJSON = new JSONObject(requestResponse.body());
+        JSONObject responseJSON = new JSONObject(responseResponse.body());
 
-        // Main.logger(this.getClass().getSimpleName(),
-        //         "Collected gateway latency: " + latency + " ms");
+        Double request_value = requestJSON
+                .getJSONObject("data")
+                .getJSONArray("result")
+                .getJSONObject(0)
+                .getJSONArray("value")
+                .getDouble(1);
 
-        // return (int) latency;
+        Double response_value = responseJSON
+                .getJSONObject("data")
+                .getJSONArray("result")
+                .getJSONObject(0)
+                .getJSONArray("value")
+                .getDouble(1);
 
-        return 0;
+        return response_value / request_value;
 
     } catch (Exception e) {
         e.printStackTrace();
-        return 0; // fallback si Prometheus ne répond pas
+        return -1; // fallback si Prometheus ne répond pas
     }
 }
 

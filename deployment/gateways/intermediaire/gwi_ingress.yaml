@@ -1,0 +1,18 @@
+# Ingress for Gateway i (intermediate gateway)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sdci-gwi-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: gwi.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sdci-gwi-clusterip
+            port:
+              number: 8181

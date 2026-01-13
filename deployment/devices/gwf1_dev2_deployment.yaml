@@ -33,4 +33,4 @@ spec:
           - name: REMOTE_NAME
             value: "gwf1"
           - name: SEND_PERIOD
-            value: "3000"
+            value: "2000"

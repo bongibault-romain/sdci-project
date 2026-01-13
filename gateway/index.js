@@ -23,6 +23,8 @@ const argv = yargs(hideBin(process.argv)).argv;
 var LOCAL_ENDPOINT = {IP : argv.local_ip, PORT : argv.local_port, NAME : argv.local_name};
 var REMOTE_ENDPOINT = {IP : argv.remote_ip, PORT : argv.remote_port, NAME : argv.remote_name};
 
+var REQUEST_PER_SECOND = 100;
+
 const E_OK              = 200;
 const E_CREATED         = 201;
 const E_FORBIDDEN       = 403;
@@ -47,10 +49,35 @@ function removeGateway(gw) {
     if (db.gateways.get(gw.Name))
         db.gateways.delete(gw.Name);
 }
+
+// Rate limiting for outgoing requests
+var outgoingRequestQueue = [];
+var lastRequestTime = 0;
+var requestInterval = 1000 / REQUEST_PER_SECOND; // milliseconds between requests
+
+function processOutgoingQueue() {
+    if (outgoingRequestQueue.length === 0) return;
     
+    var now = Date.now();
+    if (now - lastRequestTime >= requestInterval) {
+        var item = outgoingRequestQueue.shift();
+        lastRequestTime = now;
+        request(item.options, item.callback);
+        
+        if (outgoingRequestQueue.length > 0) {
+            setTimeout(processOutgoingQueue, requestInterval);
+        }
+    } else {
+        setTimeout(processOutgoingQueue, requestInterval - (now - lastRequestTime));
+    }
+}
 
 function doPOST(uri, body, onResponse) {
-    request({method: 'POST', uri: uri, json : body}, onResponse); 
+    outgoingRequestQueue.push({
+        options: {method: 'POST', uri: uri, json : body},
+        callback: onResponse
+    });
+    processOutgoingQueue();
 }
 
 function register() { 
@@ -76,6 +103,18 @@ function register() {
     );
 }
 
+app.post('/rate/:rps', function(req, res) {
+    console.log(req.url);
+    console.log(req.body);
+    var rps = parseFloat(req.params.rps);
+    if (rps > 0) {
+        REQUEST_PER_SECOND = rps;
+        requestInterval = Math.floor(1000 / REQUEST_PER_SECOND);
+        res.sendStatus(E_OK); 
+    } else {
+        res.sendStatus(E_FORBIDDEN); 
+    }
+})
 
 app.post('/gateways/register', function(req, res) {
     console.log(req.url);
@@ -102,6 +141,7 @@ app.post('/devices/register', function(req, res) {
  app.post('/device/:dev/data', function(req, res) {
     console.log(req.body);
     var dev = req.params.dev;
+
     doPOST(
         'http://' + REMOTE_ENDPOINT.IP + ':' +REMOTE_ENDPOINT.PORT + '/device/' + dev + '/data',
         req.body,
