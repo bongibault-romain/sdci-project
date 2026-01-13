@@ -129,12 +129,18 @@ app.post('/gateways/register', function(req, res) {
 app.post('/devices/register', function(req, res) {
     console.log(req.url);
     console.log(req.body);
+
+    res.sendStatus(E_OK);
+    
     doPOST(
         'http://' + REMOTE_ENDPOINT.IP + ':' +REMOTE_ENDPOINT.PORT + '/devices/register',
         req.body,
         function(error, response, respBody) {
-            console.log(respBody);
-            res.sendStatus(E_OK); 
+            if (error) {
+                console.log('Error forwarding device registration: ' + error);
+            } else {
+                console.log('Device registration forwarded: ' + respBody);
+            }
         }
     )
  });
@@ -142,12 +148,17 @@ app.post('/devices/register', function(req, res) {
     console.log(req.body);
     var dev = req.params.dev;
 
+    res.status(202).send({status: 'accepted', timestamp: Date.now()});
+    
     doPOST(
         'http://' + REMOTE_ENDPOINT.IP + ':' +REMOTE_ENDPOINT.PORT + '/device/' + dev + '/data',
         req.body,
         function(error, response, respBody) {
-            console.log(respBody);
-            res.sendStatus(E_OK); 
+            if (error) {
+                console.log('Error forwarding data from ' + dev + ': ' + error);
+            } else {
+                console.log('Data from ' + dev + ' forwarded: ' + respBody);
+            }
         }
     )
 });

@@ -58,6 +58,8 @@ function sendData() {
         return;
     }
 
+    console.log('Sending data item ' + dataItem + ' to ' + REMOTE_ENDPOINT.NAME);
+
     doPOST(
         'http://' + REMOTE_ENDPOINT.IP + ':' + REMOTE_ENDPOINT.PORT + '/device/' + LOCAL_ENDPOINT.NAME + '/data',
         {
