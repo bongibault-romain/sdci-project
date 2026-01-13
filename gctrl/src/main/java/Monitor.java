@@ -108,9 +108,9 @@ class Monitor {
     private double get_data() {
     try {
         String requestQL =
-                "sum(rate(istio_request_bytes_count{destination_workload=\"sdci-gwi\"}[1m]))" ;
+                "sum(rate(istio_requests_total{destination_workload=\"sdci-gwi\"}[1m]))" ;
         String responseQL =
-                "sum(rate(istio_response_bytes_count{destination_workload=\"sdci-gwi\"}[1m]))" ;
+                "sum(rate(istio_requests_total{source_workload=\"sdci-gwi\"}[1m]))" ;
 
         String requestEncodedQuery = URLEncoder.encode(requestQL, StandardCharsets.UTF_8);
         String responseEncodedQuery = URLEncoder.encode(responseQL, StandardCharsets.UTF_8);
