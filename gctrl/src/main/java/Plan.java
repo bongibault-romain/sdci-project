@@ -63,11 +63,11 @@ class Plan {
             i = 0;
             return plans.get(0);
         } else if (rfc.contentEquals(rfcs.get(1))) {
-            if (i == 0) {
+            if (i >= 0 && i <= 5) {
                 Main.logger(this.getClass().getSimpleName(), "Plan --> To Execute : " + plans.get(1));
                 i++;
                 return plans.get(1);
-            } else if (i == 1) {
+            } else if (i >= 5) {
                 Main.logger(this.getClass().getSimpleName(), "Plan --> To Execute : " + plans.get(2));
                 i++;
                 return plans.get(2);
