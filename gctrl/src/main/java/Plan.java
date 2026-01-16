@@ -52,17 +52,17 @@ class Plan {
         List<String> rfcs = Main.shared_knowledge.get_rfc();
         List<String> plans = Main.shared_knowledge.get_plans();
 
-        if ("YourPlansDoNotWork".contentEquals(rfc)) {
+        if ("YourPlansDoNotWork".equals(rfc)) {
             // Thread.sleep(2000);
             Main.run = false;
             Main.logger(this.getClass().getSimpleName(), "All the Plans were executed without success. \n \t\t The loop will stop!");
             // Terminate JVM
             System.exit(0);
-        } else if (rfc.contentEquals(rfcs.get(0))) {
+        } else if (rfc.equals(rfcs.get(0))) {
             Main.logger(this.getClass().getSimpleName(), "Plan --> To Execute : " + plans.get(0));
             i = 0;
             return plans.get(0);
-        } else if (rfc.contentEquals(rfcs.get(1))) {
+        } else if (rfc.equals(rfcs.get(1))) {
             if (i >= 0 && i <= 5) {
                 Main.logger(this.getClass().getSimpleName(), "Plan --> To Execute : " + plans.get(1));
                 i++;

@@ -56,10 +56,8 @@ class Execute {
                         break;
                     default:
                 }
+
                 Thread.sleep(2000);
-                continue;
-
-
             }
 
         }

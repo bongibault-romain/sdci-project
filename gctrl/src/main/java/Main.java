@@ -21,7 +21,6 @@ class Main {
     public static void main(String[] args) throws Exception {
         Logger.getRootLogger().setLevel(Level.ERROR);
 
-
         shared_knowledge.start();
         Thread.sleep(3000);
 

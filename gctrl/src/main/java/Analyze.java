@@ -16,7 +16,7 @@ import java.util.List;
 @SuppressWarnings({"SameParameterValue", "SynchronizeOnNonFinalField"})
 class Analyze {
     public String gw_current_RFC = "";
-    private static int i;
+    private static int i = 0;
 
     void start() {
         Main.logger(this.getClass().getSimpleName(), "Start Analyzing");
@@ -24,7 +24,7 @@ class Analyze {
         while (Main.run) {
 
             String current_symptom = get_symptom();
-            //Main.logger(this.getClass().getSimpleName(), "Received Symptom : " + current_symptom);
+            Main.logger(this.getClass().getSimpleName(), "Received Symptom : " + current_symptom);
 
             update_rfc(rfc_generator(current_symptom));
         }
@@ -47,13 +47,14 @@ class Analyze {
         List<String> symptoms = Main.shared_knowledge.get_symptoms();
         List<String> rfcs = Main.shared_knowledge.get_rfc();
 
-        if (symptom.contentEquals(symptoms.get(0)) || symptom.contentEquals(symptoms.get(2))) {
+
+        if ((symptom.contentEquals(symptoms.get(0)) || symptom.contentEquals(symptoms.get(2))) && i < 10) {
             Main.logger(this.getClass().getSimpleName(), "RFC --> To plan : " + rfcs.get(0));
-            i = 0;
+            i++;
             return rfcs.get(0);
         } else if (symptom.contentEquals(symptoms.get(1))) {
             i++;
-            if (i < 3) {
+            if (i < 20) {
                 Main.logger(this.getClass().getSimpleName(), "RFC --> To plan : " + rfcs.get(1));
                 return rfcs.get(1);
             } else {
