@@ -614,7 +614,7 @@ public class ArimaParameters {
         }
     }
 
-    public void displayParameters(double[] data){
+    public static void displayParameters(double[] data){
         System.out.println("═══════════════════════════════════════════════════════");
         System.out.println("EXEMPLE 1 : Calcul des paramètres ARIMA");
         System.out.println("═══════════════════════════════════════════════════════\n");
