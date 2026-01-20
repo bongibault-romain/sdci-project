@@ -64,4 +64,21 @@ class MANOAPI {
         }
     }
 
+    static int get_pod_replicas(String name) throws IOException, InterruptedException {
+        int replicas = 0;
+
+        ApiClient client = Config.defaultClient();
+        Configuration.setDefaultApiClient(client);
+        AppsV1Api api = new AppsV1Api();
+
+        try {
+            V1Scale scale = api.readNamespacedDeploymentScale(name, "default").execute();
+            replicas = Objects.requireNonNull(scale.getSpec()).getReplicas();
+        } catch (ApiException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return replicas;
+    }
+
 }

@@ -47,23 +47,23 @@ class Analyze {
         List<String> symptoms = Main.shared_knowledge.get_symptoms();
         List<String> rfcs = Main.shared_knowledge.get_rfc();
 
-
-        if ((symptom.contentEquals(symptoms.get(0)) || symptom.contentEquals(symptoms.get(2))) && i < 10) {
+        if (symptom.equals(symptoms.get(0)) || symptom.equals(symptoms.get(2))) {
             Main.logger(this.getClass().getSimpleName(), "RFC --> To plan : " + rfcs.get(0));
             i++;
             return rfcs.get(0);
-        } else if (symptom.contentEquals(symptoms.get(1))) {
+        } else if (symptom.equals(symptoms.get(1))) {
+            Main.logger(this.getClass().getSimpleName(), "RFC --> To plan : " + rfcs.get(1));
             i++;
-            if (i < 20) {
-                Main.logger(this.getClass().getSimpleName(), "RFC --> To plan : " + rfcs.get(1));
-                return rfcs.get(1);
-            } else {
-                Main.logger(this.getClass().getSimpleName(), "RFC --> To plan : " + "YourPlansDoNotWork");
-                return "YourPlansDoNotWork";
-            }
-        } else
-            return null;
+            return rfcs.get(1);
+        } else if (symptom.equals(symptoms.get(3))) {
+            Main.logger(this.getClass().getSimpleName(), "RFC --> To plan : " + rfcs.get(2));
+            i++;
+            return rfcs.get(2);
+        }
 
+        // TODO: YourPlansDoNotWork
+
+        return null;
     }
 
 

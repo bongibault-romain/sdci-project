@@ -38,18 +38,28 @@ class Execute {
                     case "UC1":
                         Main.logger(this.getClass().getSimpleName(), "Nothing to do");
                         break;
-                    case "UC2":
-                        Main.logger(this.getClass().getSimpleName(), "Deploying GW");
+                    case "UC2": // DOWNSCALE
+                        if (Knowledge.replicas < 2) {
+                            Main.logger(this.getClass().getSimpleName(), "Cannot downscale further. Minimum replicas reached.");
+                            break;
+                        }
+
+                        Main.logger(this.getClass().getSimpleName(), "Downscaling Pods to " + (Knowledge.replicas - 1));
                         try {
-                            manoapi.pod_scaling("sdci-gwi", 4);
+                            manoapi.pod_scaling("sdci-gwi", --Knowledge.replicas);
                         } catch (IOException e) {
                             Main.logger(this.getClass().getSimpleName(), e.getMessage());
                         }
                         break;
-                    case "UC3":
-                        Main.logger(this.getClass().getSimpleName(), "Redirecting Traffic");
+                    case "UC3": // UPSCALE
+                        if (Knowledge.replicas >= Knowledge.MAXIMUM_REPLICAS) {
+                            Main.logger(this.getClass().getSimpleName(), "Cannot upscale further. Maximum replicas reached.");
+                            break;
+                        }
+
+                        Main.logger(this.getClass().getSimpleName(), "Upscaling Pods to " + (Knowledge.replicas + 1));
                         try {
-                            manoapi.pod_scaling("sdci-gwi", 8);
+                            manoapi.pod_scaling("sdci-gwi", ++Knowledge.replicas);
                         } catch (IOException e) {
                             Main.logger(this.getClass().getSimpleName(), e.getMessage());
                         }

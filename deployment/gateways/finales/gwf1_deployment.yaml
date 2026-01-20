@@ -32,3 +32,5 @@ spec:
           value: "8181"
         - name: REMOTE_NAME
           value: "gwi"
+        - name: RATE
+          value: "100"

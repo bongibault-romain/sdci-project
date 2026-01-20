@@ -31,11 +31,12 @@ class Knowledge {
     static final int moving_wind = 10;
     static final int horizon = 3;
     static final String gw = "GW_I";
-    static final double gw_debit_threshold = 0.9;
+    static final double gw_debit_upgrade_threshold = 1;
+    static final double gw_debit_downgrade_threshold = 0.9;
 
     /*TODO : edit symptom, rfc, workflow_lists, plan*/
-    private static final List<String> symptom = Arrays.asList("N/A", "NOK", "OK");
-    private static final List<String> rfc = Arrays.asList("DoNotDoAnything", "Deploy4Gateways", "Deploy8Gateways");
+    private static final List<String> symptom = Arrays.asList("N/A", "DOWNGRADE", "OK", "UPGRADE");
+    private static final List<String> rfc = Arrays.asList("DoNotDoAnything", "DeleteReplicas", "AddReplicas");
     private static final List<String> workflow_lists = Arrays.asList("UC1", "UC2", "UC3");
     private static final List<String> plan = Arrays.asList("A", "B", "C");
     private final Map<String, String> gwinfo = new HashMap<>();
@@ -46,12 +47,20 @@ class Knowledge {
     private String lbip;
     private List<String> newgwsip;
     private final String importantsrcip = "192.168.0.1";
+    public static int replicas = 1;
+    public static int MAXIMUM_REPLICAS = 8;
+
+    public static final double GATEWAY_MAXIMUM_OUTPUT_DEBIT = 2.0; // RPS
 
     void start() throws Exception {
         // delete the H2 database named 'test' in the user home directory
         DeleteDbFiles.execute("~", "test", true);
         Main.logger(this.getClass().getSimpleName(), "old database 'test' deleted");
         //Initialization of the Knowledge
+        Knowledge.replicas = MANOAPI.get_pod_replicas("sdci-gwi");
+
+        Main.logger(this.getClass().getSimpleName(), "Number of replicas at the Knowledge initialization: " + Knowledge.replicas);
+
         store_symptoms();
         store_rfcs();
         store_plans();
@@ -183,9 +192,13 @@ class Knowledge {
     }
 
     ResultSet select_from_tab() {
+        return this.select_from_tab(moving_wind);
+    }
+
+    ResultSet select_from_tab(int top) {
         //Main.logger("Select the last " + n + " latencies");
         Connection conn = getDBConnection();
-        String SelectQuery = "select TOP " + moving_wind + " * from " + Knowledge.gw + "_LAT" + " ORDER BY id DESC";
+        String SelectQuery = "select TOP " + top + " * from " + Knowledge.gw + "_LAT" + " ORDER BY id DESC";
         //PreparedStatement select;
         ResultSet rs = null;
         try {
@@ -313,7 +326,7 @@ class Knowledge {
         Statement create;
         conn.setAutoCommit(false);
         create = conn.createStatement();
-        create.execute("CREATE TABLE " + gw_symp + " (id int primary key, symptom varchar(5) )");
+        create.execute("CREATE TABLE " + gw_symp + " (id int primary key, symptom varchar(50) )");
         create.close();
 
         for (int i = 0; i < symptom.size(); i++) {
@@ -401,4 +414,17 @@ class Knowledge {
         return importantsrcip;
     }
 
+    public double[] get_history(int amount) throws SQLException {
+        ResultSet rs = this.select_from_tab(amount);
+
+        rs.first();
+        double[] history = new double[amount];
+        int j = amount - 1;
+        while (rs.next()) {
+            history[j] = Double.parseDouble(rs.getString("latency"));
+            j--;
+        }
+
+        return history;
+    }
 }

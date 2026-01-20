@@ -23,6 +23,7 @@ ENV LOCAL_IP=127.0.0.1 \
     LOCAL_NAME=gwi \
     REMOTE_IP=127.0.0.1 \
     REMOTE_PORT=8080 \
-    REMOTE_NAME=srv
+    REMOTE_NAME=srv \
+    RATE=2
 
-CMD ["sh", "-c", "node index.js --local_ip ${LOCAL_IP} --local_port ${LOCAL_PORT} --local_name ${LOCAL_NAME} --remote_ip ${REMOTE_IP} --remote_port ${REMOTE_PORT} --remote_name ${REMOTE_NAME}"]
+CMD ["sh", "-c", "node index.js --local_ip ${LOCAL_IP} --local_port ${LOCAL_PORT} --local_name ${LOCAL_NAME} --remote_ip ${REMOTE_IP} --remote_port ${REMOTE_PORT} --remote_name ${REMOTE_NAME} --rate ${RATE}"]

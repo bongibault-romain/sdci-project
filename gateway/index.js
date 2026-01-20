@@ -23,7 +23,7 @@ const argv = yargs(hideBin(process.argv)).argv;
 var LOCAL_ENDPOINT = {IP : argv.local_ip, PORT : argv.local_port, NAME : argv.local_name};
 var REMOTE_ENDPOINT = {IP : argv.remote_ip, PORT : argv.remote_port, NAME : argv.remote_name};
 
-var REQUEST_PER_SECOND = 2;
+var REQUEST_PER_SECOND = argv.rate || 2;
 
 const E_OK              = 200;
 const E_CREATED         = 201;
