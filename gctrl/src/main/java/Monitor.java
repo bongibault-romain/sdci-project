@@ -3,6 +3,7 @@ import com.github.signaflo.timeseries.TimeSeries;
 import com.github.signaflo.timeseries.forecast.Forecast;
 import com.github.signaflo.timeseries.model.arima.Arima;
 import com.github.signaflo.timeseries.model.arima.ArimaOrder;
+import com.mitchtalmadge.asciidata.graph.ASCIIGraph;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciitable.CWC_LongestWord;
 import de.vandermeer.asciithemes.a7.A7_Grids;
@@ -99,15 +100,20 @@ class Monitor {
                     Thread.sleep(period);
                     double data = get_data();
 
-                    /*
+
                     try {
                         double[] history = Main.shared_knowledge.get_history(100);
 
-                        Main.logger(this.getClass().getSimpleName(), "\nHistory Chart:\n" + drawLineChart(history, 10));
+                        //ArimaParameters.displayParameters(history);
+
+                        ASCIIGraph graph = ASCIIGraph.fromSeries(history);
+
+                        System.out.println(this.getClass().getSimpleName() + " - History Chart :\n\n" + graph.plot());
+
                     } catch (SQLException e) {
                         Main.logger(this.getClass().getSimpleName(), "Failed to draw history chart");
                     }
-*/
+
 
                     Main.logger(this.getClass().getSimpleName(), "Collected Data : " + data + " req/s");
 
@@ -235,9 +241,10 @@ class Monitor {
             j--;
         }
         TimeSeries timeSeries = TimeSeries.from(DoubleFunctions.arrayFrom(history));
-        ArimaOrder modelOrder = ArimaOrder.order(0, 1, 1, 0, 1, 1);
+        ArimaOrder modelOrder = ArimaOrder.order(2, 1, 2, 1, 0, 1);
         //ArimaOrder modelOrder = ArimaOrder.order(0, 0, 0, 1, 1, 1);
         Arima model = Arima.model(timeSeries, modelOrder);
+
         Forecast forecast = model.forecast(Knowledge.moving_wind);
 
         StringBuilder sb = new StringBuilder();
