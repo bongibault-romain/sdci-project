@@ -2,6 +2,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.openapi.apis.AppsV1Api;
+import io.kubernetes.client.openapi.models.V1Deployment;
 import io.kubernetes.client.openapi.models.V1Scale;
 import io.kubernetes.client.util.Config;
 import org.h2.util.json.JSONObject;
@@ -36,16 +37,6 @@ class MANOAPI {
         return ip;
     }
 
-    List<String> deploy_multi_gws_and_lb(List<Map<String, String>> vnfsinfos) {
-        List<String> ips = new ArrayList<>();
-        //TODO
-
-        for (Map<String, String> vnfsinfo : vnfsinfos) {
-            ips.add(deploy_gw(vnfsinfo));
-        }
-
-        return ips;
-    }
 
     void pod_scaling(String name, int number) throws IOException, InterruptedException {
         String query = "localhost:/apis/apps/v1/namespaces/default/deployment/" + name + "/scale";
@@ -58,7 +49,6 @@ class MANOAPI {
             V1Scale scale = api.readNamespacedDeploymentScale(name, "default").execute();
             Objects.requireNonNull(scale.getSpec()).setReplicas(number);
             V1Scale updatedScale = api.replaceNamespacedDeploymentScale(name, "default", scale).execute();
-            System.out.println("Message : " + updatedScale.getSpec().getReplicas());
         } catch (ApiException e) {
             System.err.println(e.getMessage());
         }

@@ -6,31 +6,23 @@ MIN_PODS=1
 MAX_PODS=8
 INTERVAL=3
 
-echo "Starting autoscale random scenario..."
+echo "Starting scenario..."
 
 # Initial scale
 kubectl scale deployment "$DEPLOYMENT" --replicas=$MIN_PODS -n "$NAMESPACE"
 
-while true; do
-  # Get current number of replicas
-  CURRENT=$(kubectl get deployment "$DEPLOYMENT" -n "$NAMESPACE" -o jsonpath='{.spec.replicas}')
+sleep 10
 
-  # Random choice: 0 = scale down, 1 = scale up
-  ACTION=$((RANDOM % 2))
+echo "Scaling to $MAX_PODS device(s)"
 
-  if [ "$ACTION" -eq 1 ] && [ "$CURRENT" -lt "$MAX_PODS" ]; then
-    NEW=$((CURRENT + 1))
-    echo "Scaling UP from $CURRENT to $NEW pods"
-    kubectl scale deployment "$DEPLOYMENT" --replicas=$NEW -n "$NAMESPACE"
+kubectl scale deployment "$DEPLOYMENT" --replicas=$MAX_PODS -n "$NAMESPACE"
 
-  elif [ "$ACTION" -eq 0 ] && [ "$CURRENT" -gt "$MIN_PODS" ]; then
-    NEW=$((CURRENT - 1))
-    echo "Scaling DOWN from $CURRENT to $NEW pods"
-    kubectl scale deployment "$DEPLOYMENT" --replicas=$NEW -n "$NAMESPACE"
+sleep 60
 
-  else
-    echo "No scaling action (current: $CURRENT pods)"
-  fi
+echo "Scaling to $MIN_PODS device(s)"
 
-  sleep $INTERVAL
-done
+kubectl scale deployment "$DEPLOYMENT" --replicas=$MIN_PODS -n "$NAMESPACE"
+
+sleep 60
+
+echo "Scenario ended."

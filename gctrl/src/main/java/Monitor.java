@@ -104,11 +104,11 @@ class Monitor {
                     try {
                         double[] history = Main.shared_knowledge.get_history(100);
 
-                        //ArimaParameters.displayParameters(history);
+                        if (history.length >= 2){
+                            ASCIIGraph graph = ASCIIGraph.fromSeries(history);
 
-                        ASCIIGraph graph = ASCIIGraph.fromSeries(history);
-
-                        System.out.println(this.getClass().getSimpleName() + " - History Chart :\n\n" + graph.plot());
+                            Main.logger(this.getClass().getSimpleName(), "History Chart :\n\n" + graph.plot());
+                        }
 
                     } catch (SQLException e) {
                         Main.logger(this.getClass().getSimpleName(), "Failed to draw history chart");
@@ -241,8 +241,8 @@ class Monitor {
             j--;
         }
         TimeSeries timeSeries = TimeSeries.from(DoubleFunctions.arrayFrom(history));
-        ArimaOrder modelOrder = ArimaOrder.order(2, 1, 2, 1, 0, 1);
-        //ArimaOrder modelOrder = ArimaOrder.order(0, 0, 0, 1, 1, 1);
+        // ArimaOrder modelOrder = ArimaOrder.order(para.p, para.d, para.q, para.P, para.D, para.Q);
+        ArimaOrder modelOrder = ArimaOrder.order(0, 0, 0, 1, 1, 1);
         Arima model = Arima.model(timeSeries, modelOrder);
 
         Forecast forecast = model.forecast(Knowledge.moving_wind);

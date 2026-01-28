@@ -418,13 +418,11 @@ class Knowledge {
         ResultSet rs = this.select_from_tab(amount);
 
         rs.first();
-        double[] history = new double[amount];
-        int j = amount - 1;
+        List<Double> temp = new ArrayList<>();
         while (rs.next()) {
-            history[j] = Double.parseDouble(rs.getString("latency"));
-            j--;
+            temp.add(Double.parseDouble(rs.getString("latency")));
         }
 
-        return history;
+        return temp.stream().mapToDouble(Double::doubleValue).toArray();
     }
 }
