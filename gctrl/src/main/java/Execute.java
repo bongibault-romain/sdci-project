@@ -16,7 +16,6 @@ import java.util.List;
 class Execute {
     private static List<String> workflow_lists;
     private static final MANOAPI manoapi = new MANOAPI();
-    private static final SDNCtrlAPI sdnctlrapi = new SDNCtrlAPI();
 
     void start() throws InterruptedException {
         Main.logger(this.getClass().getSimpleName(), "Start Execution");
